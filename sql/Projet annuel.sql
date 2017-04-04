@@ -1,0 +1,161 @@
+#------------------------------------------------------------
+#        Script MySQL.
+#------------------------------------------------------------
+
+
+#------------------------------------------------------------
+# Table: Partie
+#------------------------------------------------------------
+
+CREATE TABLE Partie(
+        id              int (11) Auto_increment  NOT NULL ,
+        Date_creation   Date ,
+        Date_modif      Date ,
+        score_J1        Int ,
+        score_J2        Int ,
+        J1              Int ,
+        J2              Int ,
+        nb_piece_jouees Int ,
+        joueur_debut    Int ,
+        etat            Varchar (25) ,
+        id_plateau      Int ,
+        PRIMARY KEY (id )
+)ENGINE=InnoDB;
+
+
+#------------------------------------------------------------
+# Table: Plateau
+#------------------------------------------------------------
+
+CREATE TABLE Plateau(
+        id_plateau      int (11) Auto_increment  NOT NULL ,
+        position_pion_j Char (2) ,
+        id              Int ,
+        PRIMARY KEY (id_plateau )
+)ENGINE=InnoDB;
+
+
+#------------------------------------------------------------
+# Table: Enclos
+#------------------------------------------------------------
+
+CREATE TABLE Enclos(
+        id_enclos  int (11) Auto_increment  NOT NULL ,
+        taille     Int ,
+        case1      Char (25) ,
+        case2      Char (25) ,
+        case3      Char (25) ,
+        case4      Char (25) ,
+        case5      Char (25) ,
+        case6      Char (25) ,
+        nb_j1      Int ,
+        nb_j2      Int ,
+        id_plateau Int ,
+        PRIMARY KEY (id_enclos )
+)ENGINE=InnoDB;
+
+
+#------------------------------------------------------------
+# Table: Cases
+#------------------------------------------------------------
+
+CREATE TABLE Cases(
+        id_case     int (11) Auto_increment  NOT NULL ,
+        id_enclos   Int ,
+        coordonnees Char (25) ,
+        id_piece    Int ,
+        id          Int ,
+        PRIMARY KEY (id_case )
+)ENGINE=InnoDB;
+
+
+#------------------------------------------------------------
+# Table: Joueur
+#------------------------------------------------------------
+
+CREATE TABLE Joueur(
+        id_user        int (11) Auto_increment  NOT NULL ,
+        Email          Varchar (25) ,
+        Mdp            Varchar (255) ,
+        Date_naissance Date ,
+        Date_creation  Date ,
+        Date_modif     Date ,
+        Pseudo         Varchar (25) ,
+        Nom            Varchar (25) ,
+        Prenom         Varchar (25) ,
+        Etat           Char (1) DEFAULT 'd' ,
+        PRIMARY KEY (id_user )
+)ENGINE=InnoDB;
+
+
+#------------------------------------------------------------
+# Table: Stock
+#------------------------------------------------------------
+
+CREATE TABLE Stock(
+        id_piece  int (11) Auto_increment  NOT NULL ,
+        nb_piece  Int ,
+        id        Int ,
+        id_user   Int ,
+        id_animal Int ,
+        PRIMARY KEY (id_piece )
+)ENGINE=InnoDB;
+
+
+#------------------------------------------------------------
+# Table: Animal
+#------------------------------------------------------------
+
+CREATE TABLE Animal(
+        id_animal int (11) Auto_increment  NOT NULL ,
+        Nom       Varchar (25) ,
+        Points    Int ,
+        PRIMARY KEY (id_animal )
+)ENGINE=InnoDB;
+
+
+#------------------------------------------------------------
+# Table: effectue
+#------------------------------------------------------------
+
+CREATE TABLE effectue(
+        id_user Int NOT NULL ,
+        id      Int NOT NULL ,
+        PRIMARY KEY (id_user ,id )
+)ENGINE=InnoDB;
+
+
+#------------------------------------------------------------
+# Table: Compose
+#------------------------------------------------------------
+
+CREATE TABLE Compose(
+        id_enclos Int NOT NULL ,
+        id_case   Int NOT NULL ,
+        PRIMARY KEY (id_enclos ,id_case )
+)ENGINE=InnoDB;
+
+
+#------------------------------------------------------------
+# Table: attribu�
+#------------------------------------------------------------
+
+CREATE TABLE attribue(
+        id_case  Int NOT NULL ,
+        id_piece Int NOT NULL ,
+        PRIMARY KEY (id_case ,id_piece )
+)ENGINE=InnoDB;
+
+ALTER TABLE Partie ADD CONSTRAINT FK_Partie_id_plateau FOREIGN KEY (id_plateau) REFERENCES Plateau(id_plateau);
+ALTER TABLE Plateau ADD CONSTRAINT FK_Plateau_id FOREIGN KEY (id) REFERENCES Partie(id);
+ALTER TABLE Enclos ADD CONSTRAINT FK_Enclos_id_plateau FOREIGN KEY (id_plateau) REFERENCES Plateau(id_plateau);
+ALTER TABLE Cases ADD CONSTRAINT FK_Cases_id FOREIGN KEY (id) REFERENCES Partie(id);
+ALTER TABLE Stock ADD CONSTRAINT FK_Stock_id FOREIGN KEY (id) REFERENCES Partie(id);
+ALTER TABLE Stock ADD CONSTRAINT FK_Stock_id_user FOREIGN KEY (id_user) REFERENCES Joueur(id_user);
+ALTER TABLE Stock ADD CONSTRAINT FK_Stock_id_animal FOREIGN KEY (id_animal) REFERENCES Animal(id_animal);
+ALTER TABLE effectue ADD CONSTRAINT FK_effectue_id_user FOREIGN KEY (id_user) REFERENCES Joueur(id_user);
+ALTER TABLE effectue ADD CONSTRAINT FK_effectue_id FOREIGN KEY (id) REFERENCES Partie(id);
+ALTER TABLE Compose ADD CONSTRAINT FK_Compose_id_enclos FOREIGN KEY (id_enclos) REFERENCES Enclos(id_enclos);
+ALTER TABLE Compose ADD CONSTRAINT FK_Compose_id_case FOREIGN KEY (id_case) REFERENCES Cases(id_case);
+ALTER TABLE attribue ADD CONSTRAINT FK_attribue_id_case FOREIGN KEY (id_case) REFERENCES Cases(id_case);
+ALTER TABLE attribue ADD CONSTRAINT FK_attribue_id_piece FOREIGN KEY (id_piece) REFERENCES Stock(id_piece);
